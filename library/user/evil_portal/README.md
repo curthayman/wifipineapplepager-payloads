@@ -25,9 +25,12 @@ PentestPlaybook
 
 ## Installation Order
 1. Run `install_evil_portal`
-2. Run `default_portal` or `wordpress_portal`
+2. Run `wordpress_portal` to activate the WordPress captive portal
 
 Evil Portal is automatically enabled and started during installation.
+
+### Reverting to Default Portal
+To switch back to the default portal, run `default_portal` or `restart_evil_portal`.
 
 ## Installation Options
 
