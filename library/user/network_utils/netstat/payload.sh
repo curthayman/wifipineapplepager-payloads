@@ -27,9 +27,9 @@ LOG "5. All with process information"
 LOG "6. IPv4 connections only"
 LOG "7. IPv6 connections only"
 LOG ""
-LOG "Press UP button to continue..."
+LOG "Press A button to continue..."
 
-WAIT_FOR_BUTTON_PRESS UP
+WAIT_FOR_BUTTON_PRESS A
 
 view_choice=$(NUMBER_PICKER "Select view type (1-7)" 1)
 case $? in
