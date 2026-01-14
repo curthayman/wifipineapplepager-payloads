@@ -22,11 +22,11 @@ case ${button} in
      "A")
         channel=$(NUMBER_PICKER "Channel to examine: " 7)
         PROMPT "Cancel time entry to keep your channel selection until you reset it. You can do this by running examine_channel again."
-	seconds=$(NUMBER_PICKER "Seconds to monitor: " 7)
+		seconds=$(NUMBER_PICKER "Seconds to monitor: " 7)
         LOG "CHANGING TO CHANNEL $channel..."
         LOG ""
         LOG ""
-	PINEAPPLE_EXAMINE_CHANNEL $channel $seconds
+		PINEAPPLE_EXAMINE_CHANNEL $channel $seconds
 	    if [[ -z "$seconds" ]]; then
 			LOG "Now watching only channel $channel until reset."
 	    else
