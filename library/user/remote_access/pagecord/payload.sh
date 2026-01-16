@@ -3,7 +3,7 @@
 # Title: PageCord
 # Description: Control your poager through discord!
 # Author: beigeworm
-# Version: 1.0
+# Version: 1.2
 # Firmware: Developed for firmware version 1.0.4
 
 
