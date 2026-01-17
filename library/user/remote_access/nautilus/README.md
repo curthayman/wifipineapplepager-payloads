@@ -8,8 +8,11 @@
 
 <p align="center">
 <img src="https://img.shields.io/badge/Platform-WiFi%20Pineapple%20Pager-00d4aa?style=flat-square" />
-<img src="https://img.shields.io/badge/Version-1.4.1-blue?style=flat-square" />
+<img src="https://img.shields.io/badge/Version-1.5.1-blue?style=flat-square" />
 <img src="https://img.shields.io/badge/Author-JustSomeTrout-purple?style=flat-square" />
+</p>
+<p align="center">
+<a href="https://trello.com/b/AjPFVdmc/nautilus"><img src="https://img.shields.io/badge/Trello-Roadmap-0052CC?style=flat-square&logo=trello&logoColor=white" /></a>
 </p>
 
 ```
@@ -24,34 +27,18 @@
 ```
 
 <p align="center">
-<img width="2694" height="828" alt="Nautilus Dashboard" src="https://github.com/user-attachments/assets/579322bc-81d6-4941-9bc2-2dfdcfe57465" />
+<img width="3100" height="1359" alt="Nautilus Dashboard" src="https://github.com/user-attachments/assets/06e6860e-fd6f-4f24-beb9-1c6d09914403" />
 </p>
 
 <p align="center">
 <img width="600" height="4" alt="" src="https://github.com/user-attachments/assets/8560a6c9-b1f1-4eed-ac94-bd9e14d36ac5" />
 </p>
 
-## 🆕 New in v1.4
-
-### 🖥️ Full Shell Terminal Access
-Nautilus now includes a complete interactive shell terminal powered by ttyd:
-
-- **Full PTY Support**: Real terminal emulation with proper escape sequences, colors, and cursor control
-- **Interactive Programs**: Run `vi`, `nano`, `top`, `htop`, and any interactive CLI tool
-- **Tab Completion**: Full bash/sh tab completion support
-- **Resize Support**: Terminal automatically resizes to fit your browser window
-- **Persistent Sessions**: Shell stays active while you switch between tabs
-- **One-Click Access**: Terminal tab always available in the navigation bar
-
-Access the shell from the **Terminal** tab - no SSH client needed!
-
 ---
 
 ## Overview
 
 **Nautilus** transforms your WiFi Pineapple Pager into a web-accessible payload command center. Launch, monitor, and interact with payloads from your phone, laptop, tablet, or any device with a browser.
-
-
 
 **Nautilus answers the question:**
 
@@ -63,16 +50,38 @@ No more fumbling with D-pad navigation or manual file transfers. Just point, cli
 <img width="600" height="4" alt="" src="https://github.com/user-attachments/assets/8560a6c9-b1f1-4eed-ac94-bd9e14d36ac5" />
 </p>
 
+## New in 1.5.0
+
+| Feature | Description |
+|---------|-------------|
+| **Background Service Mode** | Run Nautilus as a persistent background service that survives payload exit |
+| **Foreground Mode** | Classic mode - payload stays running until you press B to exit |
+| **Service Management** | Re-run payload to stop the service when running in background mode |
+| **Virtual Button Panel** | Web-based D-pad and A/B buttons for payloads using `WAIT_FOR_INPUT` or `WAIT_FOR_BUTTON_PRESS` |
+| **Smart Button Filtering** | Only allowed buttons are clickable - others are dimmed and disabled |
+
+<p align="center">
+<img width="600" height="4" alt="" src="https://github.com/user-attachments/assets/8560a6c9-b1f1-4eed-ac94-bd9e14d36ac5" />
+</p>
+
 ## Features
+
+### Run Modes
+- **Background Service**: Run Nautilus as a persistent service that survives payload exit (select Yes at startup)
+- **Foreground Mode**: Classic mode where payload stays running until you press B to exit (select No at startup)
+- **Service Management**: Re-run the payload to stop the service when running in background mode
 
 ### Core Functionality
 - **Browse All Payloads**: Organized by category with collapsible sections
 - **Search**: Find payloads instantly with live filtering
 - **Payload Details**: View title, description, author, and version
+- **View Source**: Inspect payload.sh content before running
 - **One-Click Execution**: Run any payload with a single tap
 - **Live Console**: Watch output stream in real-time with color support
 - **Stop Control**: Abort running payloads at any time
-- **Shell Terminal**: Full interactive shell access with PTY support (new in v1.4)
+- **Delete Payloads**: Remove local payloads directly from the web interface
+- **Shell Terminal**: Full interactive shell access with PTY support
+- **Virtual Button Panel**: D-pad and A/B buttons for payloads using `WAIT_FOR_INPUT`
 
 ### 🌐 GitHub Integration
 
@@ -91,7 +100,6 @@ Nautilus now has three payload sources accessible via tabs:
 - **Automatic Cleanup**: Downloaded payloads are removed after execution
 - **Cached for Speed**: GitHub payload list is cached locally for fast browsing
 - **Install to Local**: Save GitHub payloads permanently to your Pager with one click
-- **Uninstall Payloads**: Remove local payloads directly from the web interface
 
 ### 📶 WiFi Client Mode
 
@@ -129,7 +137,8 @@ Nautilus includes multiple layers of protection against web-based attacks:
 | **Session Management** | Authenticated sessions with secure cookies |
 | **Origin/Referer Validation** | Blocks cross-origin requests from malicious websites |
 | **One-Time Tokens** | CSRF tokens required for payload execution |
-| **Path Traversal Protection** | Prevents `/../` directory escape attacks |
+| **Path Traversal Protection** | Prevents `/../` directory escape attacks in local and GitHub URLs |
+| **GitHub URL Validation** | Only allows payloads from `wifipineapplepager-payloads` repositories |
 | **Response Injection Protection** | Blocks shell metacharacters in user input |
 | **Payload Path Validation** | Only executes files matching `/root/payloads/user/*/payload.sh` |
 | **XSS Protection** | HTML escaping on all dynamic content including category names |
@@ -205,7 +214,9 @@ Nautilus includes multiple layers of protection against web-based attacks:
 │  │  ├── TEXT_PICKER        → Prompt via SSE              │  │
 │  │  ├── NUMBER_PICKER      → Prompt via SSE              │  │
 │  │  ├── IP_PICKER          → Prompt via SSE              │  │
-│  │  └── MAC_PICKER         → Prompt via SSE              │  │
+│  │  ├── MAC_PICKER         → Prompt via SSE              │  │
+│  │  ├── WAIT_FOR_INPUT     → Button panel via SSE        │  │
+│  │  └── WAIT_FOR_BUTTON_PRESS → Button panel via SSE     │  │
 │  └───────────────────────────────────────────────────────┘  │
 │                              │                              │
 │                              ▼                              │
@@ -230,7 +241,7 @@ When you run a payload from the **Merged** or **PRs** tab:
 When you run a payload through Nautilus, it doesn't run directly. Instead:
 
 1. **Wrapper Created**: A temporary script defines wrapper functions for all DuckyScript commands
-2. **Functions Exported**: `LOG`, `LED`, `CONFIRMATION_DIALOG`, etc. are exported to subshells
+2. **Functions Exported**: `LOG`, `LED`, `CONFIRMATION_DIALOG`, `WAIT_FOR_INPUT`, etc. are exported to subshells
 3. **Payload Sourced**: Your payload runs with wrapper functions taking precedence
 4. **Output Captured**: All stdout/stderr streams to `/tmp/nautilus_output.log`
 5. **SSE Polling**: The CGI backend polls the log file every 200ms for new lines
@@ -384,6 +395,16 @@ The spinner overlay includes a kill button (X) to abort the payload if needed.
 | `IP_PICKER "title" "192.168.1.1"` | IP input | IP address |
 | `MAC_PICKER "title" "00:11:22:33:44:55"` | MAC input | MAC address |
 | `PROMPT "message"` | Text input | User's text |
+
+### Button Input Commands (Virtual D-Pad)
+
+| Command | Behavior | Returns |
+|---------|----------|---------|
+| `WAIT_FOR_INPUT` | Shows all buttons, waits for any press | `UP`, `DOWN`, `LEFT`, `RIGHT`, `A`, or `B` |
+| `WAIT_FOR_BUTTON_PRESS UP` | Shows only UP button enabled | `UP` |
+| `WAIT_FOR_BUTTON_PRESS A B` | Shows A and B buttons enabled | `A` or `B` |
+
+The virtual button panel appears at the bottom of the console when a payload requests button input. Only allowed buttons are clickable - others are dimmed and disabled.
 
 ### Passthrough Commands
 
