@@ -740,8 +740,10 @@ LOG "Forcing captive portal re-detection..."
 
 sleep 2
 
+# Reset TCP state without breaking DNS
 /etc/init.d/firewall restart
 
+# Restart GoodPortal DNS hijack ONLY (do NOT touch system dnsmasq)
 if [ -f /tmp/goodportal-dns.pid ]; then
     kill "$(cat /tmp/goodportal-dns.pid)" 2>/dev/null
 fi
