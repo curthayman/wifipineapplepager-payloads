@@ -2309,7 +2309,7 @@
           <div class="tab favourites" data-tab="favourites" onclick="switchTab('favourites')"><svg viewBox="0 0 24 24">
               <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
             </svg>Favourites</div>
-          <div class="tab resource-tab" data-resource="loot" onclick="switchResource('loot')">💰 Loot</div>
+          
         </div>
         <div class="tabs-row resource-row">
           <div class="tab resource-tab active" data-resource="payloads" onclick="switchResource('payloads')">📦 Payloads
@@ -2319,8 +2319,8 @@
         </div>
         <div class="tabs-row resource-row">
           <div class="tab resource-tab" data-resource="themes" onclick="switchResource('themes')">🎨 Themes</div>
-          <div class="tab resource-tab" data-resource="ringtones" onclick="switchResource('ringtones')">🎵 Ringtones
-          </div>
+          <div class="tab resource-tab" data-resource="ringtones" onclick="switchResource('ringtones')">🎵 Ringtones</div>
+          <div class="tab resource-tab" data-resource="loot" onclick="switchResource('loot')">💰 Loot</div>
         </div>
 
         <div class="tabs-row">
@@ -2975,32 +2975,55 @@
     function switchResource(res) {
       currentResource = res;
       document.querySelectorAll('.resource-tab').forEach(t => t.classList.toggle('active', t.dataset.resource === res));
-      payloads = allData[res] || {};
-      filtered = payloads;
-      render();
-      const resLabel = res.charAt(0).toUpperCase() + res.slice(1);
-      $('searchBox').placeholder = 'Search ' + resLabel.toLowerCase() + '...';
-      $('searchBoxMerged').placeholder = 'Search GitHub ' + resLabel.toLowerCase() + '...';
-      const total = Object.values(payloads).flat().length;
-      $('status').textContent = 'Ready • ' + total + ' ' + resLabel.toLowerCase();
-      // Clear cached data for new resource
-      githubPayloads = {};
-      filteredGithub = {};
-      githubPRs = [];
-      filteredPRs = [];
+      
       // Loot is local-only, hide GitHub tabs
       const isLoot = res === 'loot';
       document.querySelectorAll('.tab[data-tab="merged"], .tab[data-tab="prs"]').forEach(t => t.style.display = isLoot ? 'none' : '');
+      
       if (isLoot) {
+        // Fetch loot live - no cache needed
         switchTab('local');
-        // Show download all button for loot
-        renderLootHeader();
+        loadLootLive();
       } else {
+        payloads = allData[res] || {};
+        filtered = payloads;
+        render();
+        const resLabel = res.charAt(0).toUpperCase() + res.slice(1);
+        $('searchBox').placeholder = 'Search ' + resLabel.toLowerCase() + '...';
+        $('searchBoxMerged').placeholder = 'Search GitHub ' + resLabel.toLowerCase() + '...';
+        const total = Object.values(payloads).flat().length;
+        $('status').textContent = 'Ready • ' + total + ' ' + resLabel.toLowerCase();
+        // Clear cached data for new resource
+        githubPayloads = {};
+        filteredGithub = {};
+        githubPRs = [];
+        filteredPRs = [];
         loadGithubPayloads();
         loadGithubPRs();
         // Remove loot header if exists
         const lootHeader = document.getElementById('lootHeader');
         if (lootHeader) lootHeader.remove();
+      }
+    }
+
+    async function loadLootLive() {
+      $('status').textContent = 'Loading loot...';
+      try {
+        const resp = await fetch('cgi-bin/api.sh?action=scan_loot');
+        const data = await resp.json();
+        payloads = data;
+        allData.loot = data;  // Update cache too
+        filtered = payloads;
+        render();
+        $('searchBox').placeholder = 'Search loot...';
+        const total = Object.values(payloads).flat().length;
+        $('status').textContent = 'Ready • ' + total + ' loot files';
+        renderLootHeader();
+      } catch (e) {
+        $('status').textContent = 'Error loading loot';
+        payloads = {};
+        filtered = {};
+        render();
       }
     }
 

@@ -2,6 +2,17 @@
 
 All notable changes to Nautilus will be documented in this file.
 
+## [1.8.4] - 2026-02-05
+
+### Added
+
+- **Loot Browser**: New resource type for browsing `/root/loot/` files
+  - Live scanning - no refresh needed, files load instantly when switching to Loot tab
+  - Download individual files or all loot as ZIP archive
+  - View file contents directly in console
+  - Delete loot files
+  - Full subdirectory path shown as categories
+
 ## [1.8.3] - 2026-01-30
 
 ### Added

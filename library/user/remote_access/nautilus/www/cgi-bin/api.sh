@@ -2108,6 +2108,61 @@ delete_loot() {
     echo '{"success":true}'
 }
 
+scan_loot_live() {
+    local loot_dir="/root/loot"
+    echo "Content-Type: application/json"
+    echo ""
+    
+    if [ ! -d "$loot_dir" ]; then
+        echo '{}'
+        return
+    fi
+    
+    find "$loot_dir" -type f -print 2>/dev/null | \
+    awk -v root="$loot_dir" '
+    BEGIN { ORS="" }
+    {
+        file = $0
+        relpath = file
+        sub("^" root "/?", "", relpath)
+        
+        n = split(file, parts, "/")
+        fname = parts[n]
+        
+        if (index(relpath, "/") > 0) {
+            category = relpath
+            sub("/[^/]*$", "", category)
+        } else {
+            category = "files"
+        }
+        
+        cmd = "stat -c %s \"" file "\" 2>/dev/null || stat -f %z \"" file "\" 2>/dev/null"
+        cmd | getline fsize
+        close(cmd)
+        if (fsize == "") fsize = "0"
+        
+        gsub(/[\t\r\n]/, " ", fname); gsub(/\\/, "\\\\", fname); gsub(/"/, "\\\"", fname)
+        gsub(/[\t\r\n]/, " ", relpath); gsub(/\\/, "\\\\", relpath); gsub(/"/, "\\\"", relpath)
+        
+        entry = "{\"name\":\"" fname "\",\"desc\":\"" relpath "\",\"author\":\"\",\"path\":\"" file "\",\"size\":" fsize "}"
+        if (category in cats) {
+            cats[category] = cats[category] "," entry
+        } else {
+            cats[category] = entry
+            catorder[++catcount] = category
+        }
+    }
+    END {
+        printf "{"
+        for (i = 1; i <= catcount; i++) {
+            if (i > 1) printf ","
+            printf "\"%s\":[%s]", catorder[i], cats[catorder[i]]
+        }
+        printf "}"
+    }
+    '
+}
+
 action=""
 rpath=""
 response=""
@@ -2199,6 +2254,7 @@ case "$action" in
     download_loot) require_auth; download_loot "$rpath" ;;
     download_loot_all) require_auth; download_loot_all ;;
     delete_loot) require_auth; delete_loot "$rpath" ;;
+    scan_loot) require_auth; scan_loot_live ;;
     *) echo "Content-Type: application/json"; echo ""; echo '{"error":"Unknown action"}' ;;
 esac
 
